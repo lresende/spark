@@ -203,7 +203,6 @@ streaming_kinesis_asl = Module(
     dependencies=[tags],
     source_file_regexes=[
         "external/kinesis-asl/",
-        "external/kinesis-asl-assembly/",
     ],
     build_profile_flags=[
         "-Pkinesis-asl",

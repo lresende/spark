@@ -1504,8 +1504,8 @@ def search_flume_assembly_jar():
 
 def search_kinesis_asl_assembly_jar():
     SPARK_HOME = os.environ["SPARK_HOME"]
-    kinesis_asl_assembly_dir = os.path.join(SPARK_HOME, "external/kinesis-asl-assembly")
-    jars = search_jar(kinesis_asl_assembly_dir, "spark-streaming-kinesis-asl-assembly")
+    kinesis_asl_dir = os.path.join(SPARK_HOME, "external/kinesis-asl")
+    jars = search_jar(kinesis_asl_dir, "spark-streaming-kinesis-asl")
     if not jars:
         return None
     elif len(jars) > 1:
@@ -1543,15 +1543,14 @@ if __name__ == "__main__":
         sys.stderr.write("Skipping all Kinesis Python tests as the optional Kinesis project was "
                          "not compiled into a JAR. To run these tests, "
                          "you need to build Spark with 'build/sbt -Pkinesis-asl assembly/package "
-                         "streaming-kinesis-asl-assembly/assembly' or "
-                         "'build/mvn -Pkinesis-asl package' before running this test.")
+                         "or 'build/mvn -Pkinesis-asl package' before running this test.")
     else:
         raise Exception(
             ("Failed to find Spark Streaming Kinesis assembly jar in %s. "
-             % kinesis_asl_assembly_dir) +
+             % kinesis_asl_dir) +
             "You need to build Spark with 'build/sbt -Pkinesis-asl "
-            "assembly/package streaming-kinesis-asl-assembly/assembly'"
-            "or 'build/mvn -Pkinesis-asl package' before running this test.")
+            "assembly/package' or 'build/mvn -Pkinesis-asl package' "
+            "before running this test.")
 
     sys.stderr.write("Running tests: %s \n" % (str(testcases)))
     failed = False

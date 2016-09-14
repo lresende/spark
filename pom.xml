@@ -2430,7 +2430,6 @@
       <id>kinesis-asl</id>
       <modules>
         <module>external/kinesis-asl</module>
-        <module>external/kinesis-asl-assembly</module>
       </modules>
     </profile>
 

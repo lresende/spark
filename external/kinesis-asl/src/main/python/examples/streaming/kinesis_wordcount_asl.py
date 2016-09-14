@@ -34,8 +34,7 @@
       $ export AWS_SECRET_KEY=<your-secret-key>
 
       # run the example
-      $ bin/spark-submit -jar external/kinesis-asl/target/scala-*/\
-        spark-streaming-kinesis-asl-assembly_*.jar \
+      $ bin/spark-submit --packages org.apache.spark:spark-streaming-kinesis-asl_2.11:2.0.0 \
         external/kinesis-asl/src/main/python/examples/streaming/kinesis_wordcount_asl.py \
         myAppName mySparkStream https://kinesis.us-east-1.amazonaws.com
 

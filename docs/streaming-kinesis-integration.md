@@ -127,9 +127,6 @@ A Kinesis stream can be set up at one of the valid Kinesis endpoints with 1 or m
 
 	    ./bin/spark-submit --packages org.apache.spark:spark-streaming-kinesis-asl_{{site.SCALA_BINARY_VERSION}}:{{site.SPARK_VERSION_SHORT}} ...
 
-	Alternatively, you can also download the JAR of the Maven artifact `spark-streaming-kinesis-asl-assembly` from the
-	[Maven repository](http://search.maven.org/#search|ga|1|a%3A%22spark-streaming-kinesis-asl-assembly_{{site.SCALA_BINARY_VERSION}}%22%20AND%20v%3A%22{{site.SPARK_VERSION_SHORT}}%22) and add it to `spark-submit` with `--jars`.
-
 	<p style="text-align: center;">
   		<img src="img/streaming-kinesis-arch.png"
        		title="Spark Streaming Kinesis Architecture"
@@ -192,8 +189,7 @@ To run the example,
 	</div>
 	<div data-lang="python" markdown="1">
 
-        bin/spark-submit --jars external/kinesis-asl/target/scala-*/\
-            spark-streaming-kinesis-asl-assembly_*.jar \
+        bin/spark-submit --packages org.apache.spark:spark-streaming-kinesis-asl_2.11:2.0.0 \
             external/kinesis-asl/src/main/python/examples/streaming/kinesis_wordcount_asl.py \
             [Kinesis app name] [Kinesis stream name] [endpoint URL] [region name]
 
