@@ -1467,6 +1467,12 @@ def search_jar(dir, name_prefix):
             glob.glob(os.path.join(dir, "target/" + name_prefix + "_*.jar")))  # maven build
     return [jar for jar in jars if not jar.endswith(ignored_jar_suffixes)]
 
+def search_dependency_jars(dir):
+    # We should ignore the following jars
+    ignored_jar_suffixes = ("javadoc.jar", "sources.jar", "test-sources.jar", "tests.jar")
+    jars = (glob.glob(os.path.join(dir, "target/dependency/" + "*.jar")))  # maven build
+    return [jar for jar in jars if not jar.endswith(ignored_jar_suffixes)]
+
 
 def search_kafka_assembly_jar():
     SPARK_HOME = os.environ["SPARK_HOME"]
@@ -1502,7 +1508,7 @@ def search_flume_assembly_jar():
         return jars[0]
 
 
-def search_kinesis_asl_assembly_jar():
+def search_kinesis_asl_jar():
     SPARK_HOME = os.environ["SPARK_HOME"]
     kinesis_asl_dir = os.path.join(SPARK_HOME, "external/kinesis-asl")
     jars = search_jar(kinesis_asl_dir, "spark-streaming-kinesis-asl")
@@ -1514,6 +1520,15 @@ def search_kinesis_asl_assembly_jar():
     else:
         return jars[0]
 
+def search_kinesis_asl_dependency_jars():
+    SPARK_HOME = os.environ["SPARK_HOME"]
+    kinesis_asl_dir = os.path.join(SPARK_HOME, "external/kinesis-asl")
+    jars = search_dependency_jars(kinesis_asl_dir)
+    if not jars:
+        return None
+    else:
+        return jars
+
 
 # Must be same as the variable and condition defined in KinesisTestUtils.scala
 kinesis_test_environ_var = "ENABLE_KINESIS_TESTS"
@@ -1523,14 +1538,22 @@ if __name__ == "__main__":
     from pyspark.streaming.tests import *
     kafka_assembly_jar = search_kafka_assembly_jar()
     flume_assembly_jar = search_flume_assembly_jar()
-    kinesis_asl_assembly_jar = search_kinesis_asl_assembly_jar()
+    kinesis_asl_jar = search_kinesis_asl_jar()
+    kinesis_asl_dependency_jars = search_kinesis_asl_dependency_jars()
 
-    if kinesis_asl_assembly_jar is None:
+    if kinesis_asl_jar is None or kinesis_asl_dependency_jars is None:
         kinesis_jar_present = False
-        jars = "%s,%s" % (kafka_assembly_jar, flume_assembly_jar)
+        jars = kafka_assembly_jar + flume_assembly_jar
     else:
         kinesis_jar_present = True
-        jars = "%s,%s,%s" % (kafka_assembly_jar, flume_assembly_jar, kinesis_asl_assembly_jar)
+        #jars = "%s,%s,%s, %s" % (kafka_assembly_jar, flume_assembly_jar, kinesis_asl_jar, ','.join(kinesis_asl_dependency_jars))
+        jars = "%s,%s,%s" % (kafka_assembly_jar, flume_assembly_jar, kinesis_asl_jar)
+
+        #jars = jars + kinesis_asl_dependency_jars
+        print jars
+        #print ", ".join(kinesis_asl_dependency_jars)
+        ##print type(jars)
+        #print type(kinesis_asl_dependency_jars)
 
     os.environ["PYSPARK_SUBMIT_ARGS"] = "--jars %s pyspark-shell" % jars
     testcases = [BasicOperationTests, WindowFunctionTests, StreamingContextTests, CheckpointTests,
